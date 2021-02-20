@@ -1,1 +1,2 @@
 # seddit
+- A reddit clone
