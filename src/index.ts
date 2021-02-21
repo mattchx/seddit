@@ -1,21 +1,18 @@
-import { MikroORM } from '@mikro-orm/core';
-import { __prod__ } from './constants';
-import { Post } from './entities/Posts';
+import { MikroORM } from "@mikro-orm/core";
+import { __prod__ } from "./constants";
+import { Post } from "./entities/Post";
+import microConfig from "./mikro-orm.config";
 
 const main = async () => {
-  const orm = await MikroORM.init({
-    entities: [Post],
-    dbName: 'seddit',
-    user: 'postgres',
-    password: 'postgres',
-    type: 'postgresql',
-    debug: !__prod__,
-  });
+  const orm = await MikroORM.init(microConfig);
+  await orm.getMigrator().up();
+  // const post = orm.em.create(Post, { title: "my first post" });
+  // await orm.em.persistAndFlush(post);
 
-  const post = orm.em.create(Post, { title: 'my first post' });
-  await orm.em.persistAndFlush(post); // can also use .nativeInsert
-  console.log('---------------sql 2------------------');
-  await orm.em.nativeInsert(Post, { title: 'my first post 2' });
+  // const posts = await orm.em.find(Post, {});
+  // console.log(posts);
 };
 
-main().catch(err => console.log(err));
+main().catch((err) => {
+  console.error(err);
+});
