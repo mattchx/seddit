@@ -11,4 +11,11 @@ const main = async () => {
     type: 'postgresql',
     debug: !__prod__,
   });
+
+  const post = orm.em.create(Post, { title: 'my first post' });
+  await orm.em.persistAndFlush(post); // can also use .nativeInsert
+  console.log('---------------sql 2------------------');
+  await orm.em.nativeInsert(Post, { title: 'my first post 2' });
 };
+
+main().catch(err => console.log(err));
