@@ -9,8 +9,7 @@ export default {
     pattern: /^[\w-]+\d+\.[tj]s$/,
   },
   entities: [Post],
-  dbName: "seddit",
+  dbName: "lireddit",
   type: "postgresql",
-  password: 'postgres',
   debug: !__prod__,
 } as Parameters<typeof MikroORM.init>[0];
