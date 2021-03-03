@@ -1,6 +1,6 @@
-import { Resolver, Query, Ctx, Arg, Mutation } from 'type-graphql';
-import { Post } from '../entities/Post';
-import { MyContext } from '../types';
+import { Resolver, Query, Ctx, Arg, Mutation } from "type-graphql";
+import { Post } from "../entities/Post";
+import { MyContext } from "../types";
 
 @Resolver()
 export class PostResolver {
@@ -9,11 +9,8 @@ export class PostResolver {
     return em.find(Post, {});
   }
 
-  @Query(() => Post, {nullable:true})
-  post(
-    @Arg("id") id: number,
-    @Ctx() { em }: MyContext
-  ): Promise<Post | null> {
+  @Query(() => Post, { nullable: true })
+  post(@Arg("id") id: number, @Ctx() { em }: MyContext): Promise<Post | null> {
     return em.findOne(Post, { id });
   }
 
@@ -21,27 +18,27 @@ export class PostResolver {
   async createPost(
     @Arg("title") title: string,
     @Ctx() { em }: MyContext
-  ): Promise<Post | null> {
-    const post = em.create(Post, {title})
-    await em.persistAndFlush(post)
-    return post
+  ): Promise<Post> {
+    const post = em.create(Post, { title });
+    await em.persistAndFlush(post);
+    return post;
   }
 
-  @Mutation(() => Post, {nullable:true})
+  @Mutation(() => Post, { nullable: true })
   async updatePost(
     @Arg("id") id: number,
-    @Arg("title") title: string,
+    @Arg("title", () => String, { nullable: true }) title: string,
     @Ctx() { em }: MyContext
   ): Promise<Post | null> {
-    const post = em.findOne(Post, {id})
+    const post = await em.findOne(Post, { id });
     if (!post) {
-        return null
+      return null;
     }
-    if (typeof title !== 'undefined') {
-        post.title = title
+    if (typeof title !== "undefined") {
+      post.title = title;
+      await em.persistAndFlush(post);
     }
-    await em.persistAndFlush(post)
-    return post
+    return post;
   }
 
   @Mutation(() => Boolean)
@@ -49,7 +46,7 @@ export class PostResolver {
     @Arg("id") id: number,
     @Ctx() { em }: MyContext
   ): Promise<boolean> {
-    await em.nativeDelete(Post,{id})
-    return true
+    await em.nativeDelete(Post, { id });
+    return true;
   }
 }
